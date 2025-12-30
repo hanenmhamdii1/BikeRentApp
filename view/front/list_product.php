@@ -60,7 +60,11 @@ $products = $pc->listAllProducts();
                     <i class="fa-solid fa-plus"></i> Add Vehicle
                 </a>
             <?php endif; ?>
-            
+            <?php if($_SESSION['user_role'] == 'client'): ?>
+        <a href="my_rentals.php" class="add-btn" style="background: #2e2e2e;">
+            <i class="fa-solid fa-clock-rotate-left"></i> My Rentals
+        </a>
+    <?php endif; ?>
             <a href="logout.php" class="logout-link">
                 <i class="fa-solid fa-sign-out-alt"></i> Logout
             </a>

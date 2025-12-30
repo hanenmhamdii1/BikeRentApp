@@ -31,5 +31,23 @@ class RentController {
             die('Error: ' . $e->getMessage());
         }
     }
+
+    // Add this inside your RentController class
+public function getRentalsByClient($userId) {
+    $db = Database::connect();
+    try {
+        // We join with the products table to get the bike name and image
+        $sql = "SELECT r.*, p.name as bike_name, p.image_url, p.type 
+                FROM rentals r 
+                JOIN products p ON r.product_id = p.id 
+                WHERE r.user_id = :uid 
+                ORDER BY r.created_at DESC";
+        $query = $db->prepare($sql);
+        $query->execute(['uid' => $userId]);
+        return $query->fetchAll();
+    } catch (Exception $e) { 
+        die('Error: ' . $e->getMessage()); 
+    }
+}
 }
 ?>
