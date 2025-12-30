@@ -43,7 +43,8 @@ $stats = $ac->getStats();
 
 <div class="sidebar">
     <h3 class="mb-5 text-primary">AdminPanel</h3>
-    <a href="#" class="nav-link active"><i class="fa fa-users me-2"></i> Users Management</a>
+    <a href="#" class="nav-link "><i class="fa fa-users me-2"></i> Users Management</a>
+    <a href="../back/bookList.php" class="nav-link"><i class="fa fa-list me-2"></i> Booking List</a>
     <a href="../front/list_product.php" class="nav-link"><i class="fa fa-bicycle me-2"></i> View Gallery</a>
     <a href="../front/logout.php" class="nav-link text-danger mt-5"><i class="fa fa-sign-out-alt me-2"></i> Logout</a>
 </div>

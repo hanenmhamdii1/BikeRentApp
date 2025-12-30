@@ -9,7 +9,11 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $pc = new ProductController();
-$products = $pc->listAllProducts();
+
+// We capture these for the initial page load so the search stays if you refresh
+$search = $_GET['search'] ?? '';
+$status = $_GET['status'] ?? '';
+$products = $pc->listAllProducts($search, $status);
 ?>
 
 <!DOCTYPE html>
@@ -24,11 +28,9 @@ $products = $pc->listAllProducts();
     <link rel="stylesheet" href="assests/css/gallery.css">
     
     <style>
-        /* Force icons and visibility for high-priority elements */
         .fa-solid, .fas { font-family: "Font Awesome 6 Free" !important; font-weight: 900 !important; }
         .owner-actions { display: flex !important; visibility: visible !important; }
         
-        /* Status Badge Styles */
         .status-badge {
             position: absolute;
             bottom: 10px;
@@ -61,10 +63,10 @@ $products = $pc->listAllProducts();
                 </a>
             <?php endif; ?>
             <?php if($_SESSION['user_role'] == 'client'): ?>
-        <a href="my_rentals.php" class="add-btn" style="background: #2e2e2e;">
-            <i class="fa-solid fa-clock-rotate-left"></i> My Rentals
-        </a>
-    <?php endif; ?>
+                <a href="my_rentals.php" class="add-btn" style="background: #2e2e2e;">
+                    <i class="fa-solid fa-clock-rotate-left"></i> My Rentals
+                </a>
+            <?php endif; ?>
             <a href="logout.php" class="logout-link">
                 <i class="fa-solid fa-sign-out-alt"></i> Logout
             </a>
@@ -76,7 +78,28 @@ $products = $pc->listAllProducts();
         <p class="text-muted">Choose from our selection of premium bicycles and scooters.</p>
     </div>
 
-    <div class="bike-grid">
+    <div class="card border-0 shadow-sm p-4 mb-5" style="border-radius: 20px;">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Live Search</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
+                    <input type="text" id="productSearch" class="form-control border-start-0" placeholder="Type name, type or brand...">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Availability</label>
+                <select id="statusFilter" class="form-select">
+                    <option value="">All Vehicles</option>
+                    <option value="available">Available Only</option>
+                    <option value="rented">Rented Out</option>
+                    <option value="maintenance">Maintenance</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="bike-grid" id="productGrid">
         <?php if (!empty($products)): ?>
             <?php foreach ($products as $p): ?>
                 <div class="bike-card">
@@ -97,7 +120,7 @@ $products = $pc->listAllProducts();
                                 <a href="edit_product.php?id=<?php echo $p['id']; ?>" class="action-icon edit" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <a href="delete_product.php?id=<?php echo $p['id']; ?>" class="action-icon delete" title="Delete" onclick="return confirm('Are you sure you want to delete this listing?')">
+                                <a href="delete_product.php?id=<?php echo $p['id']; ?>" class="action-icon delete" title="Delete" onclick="return confirm('Are you sure?')">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </div>
@@ -116,15 +139,13 @@ $products = $pc->listAllProducts();
                             <?php echo htmlspecialchars(substr($p['description'], 0, 70)) . '...'; ?>
                         </p>
 
-                      <?php if($p['status'] == 'available'): ?>
-        <a href="product_details.php?id=<?php echo $p['id']; ?>" class="btn-rent">
-            View Details
-        </a>
-    <?php else: ?>
-        <button class="btn btn-secondary w-100 py-2 disabled" style="border-radius: 10px; font-weight: 600; background: #bdc3c7; border: none; cursor: not-allowed;">
-            <i class="fa fa-lock me-2"></i> Currently <?php echo ucfirst($p['status']); ?>
-        </button>
-    <?php endif; ?>
+                        <?php if($p['status'] == 'available'): ?>
+                            <a href="product_details.php?id=<?php echo $p['id']; ?>" class="btn-rent">View Details</a>
+                        <?php else: ?>
+                            <button class="btn btn-secondary w-100 py-2 disabled" style="border-radius: 10px; font-weight: 600; background: #bdc3c7; border: none; cursor: not-allowed;">
+                                <i class="fa fa-lock me-2"></i> Currently <?php echo ucfirst($p['status']); ?>
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -137,5 +158,28 @@ $products = $pc->listAllProducts();
     </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('productSearch');
+    const statusSelect = document.getElementById('statusFilter');
+    const grid = document.getElementById('productGrid');
+
+    function updateGallery() {
+        const s = searchInput.value;
+        const st = statusSelect.value;
+
+        // Note: Make sure search_products.php exists in the same folder!
+        fetch(`search_products.php?search=${encodeURIComponent(s)}&status=${st}`)
+            .then(response => response.text())
+            .then(data => {
+                grid.innerHTML = data;
+            })
+            .catch(err => console.error('Error updating gallery:', err));
+    }
+
+    searchInput.addEventListener('input', updateGallery);
+    statusSelect.addEventListener('change', updateGallery);
+});
+</script>
 </body>
 </html>

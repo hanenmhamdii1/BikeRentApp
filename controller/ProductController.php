@@ -21,21 +21,28 @@ class ProductController {
         } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
     }
 
- public function listAllProducts() {
-        $db = Database::connect();
-        try {
-            // We removed "WHERE status = 'available'" to show everything
-            $query = $db->query("SELECT * FROM products ORDER BY id DESC");
-            return $query->fetchAll();
-        } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
-    }
+ public function listAllProducts($search = '', $statusFilter = '') {
+    $db = Database::connect();
+    try {
+        $sql = "SELECT * FROM products WHERE 1=1"; // 1=1 makes adding conditions easier
+        $params = [];
 
-    public function getProductById($id) {
-        $db = Database::connect();
-        $query = $db->prepare("SELECT * FROM products WHERE id = :id");
-        $query->execute(['id' => $id]);
-        return $query->fetch();
-    }
+        if (!empty($search)) {
+            $sql .= " AND name LIKE :search";
+            $params['search'] = "%$search%";
+        }
+
+        if (!empty($statusFilter)) {
+            $sql .= " AND status = :status";
+            $params['status'] = $statusFilter;
+        }
+
+        $sql .= " ORDER BY id DESC";
+        $query = $db->prepare($sql);
+        $query->execute($params);
+        return $query->fetchAll();
+    } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
+}
 
 public function updateProduct($id, $name, $type, $price, $description, $image, $status) {
     $db = Database::connect();
