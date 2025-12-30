@@ -25,12 +25,10 @@ $products = $pc->listAllProducts();
     
     <link rel="stylesheet" href="assests/css/gallery.css">
     
-    <style>
-        /* Extra safety to ensure Font Awesome renders correctly */
-        .fa-solid, .fas {
-            font-family: "Font Awesome 6 Free" !important;
-            font-weight: 900 !important;
-        }
+<style>
+        /* Force icons to render even if FontAwesome is struggling */
+        .fa-solid, .fas { font-family: "Font Awesome 6 Free" !important; font-weight: 900 !important; }
+        .owner-actions { display: flex !important; visibility: visible !important; }
     </style>
 </head>
 <body>
@@ -67,43 +65,26 @@ $products = $pc->listAllProducts();
                     <div class="bike-img-container">
                         <span class="bike-tag"><?php echo htmlspecialchars($p['type']); ?></span>
                         
-                        <?php if($_SESSION['user_role'] == 'owner' && $p['owner_id'] == $_SESSION['user_id']): ?>
+                        <?php if($_SESSION['user_role'] == 'owner'): ?>
                             <div class="owner-actions">
-                                <a href="edit_product.php?id=<?php echo $p['id']; ?>" class="action-icon edit" title="Edit">
+                                <a href="edit_product.php?id=<?php echo $p['id']; ?>" class="action-icon edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <a href="delete_product.php?id=<?php echo $p['id']; ?>" 
-                                   class="action-icon delete" 
-                                   title="Delete"
-                                   onclick="return confirm('Are you sure you want to delete this listing?')">
+                                <a href="delete_product.php?id=<?php echo $p['id']; ?>" class="action-icon delete" onclick="return confirm('Delete?')">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </div>
                         <?php endif; ?>
 
-                        <img src="<?php echo !empty($p['image_url']) ? htmlspecialchars($p['image_url']) : 'https://via.placeholder.com/400x300?text=No+Image'; ?>" 
-                             alt="Vehicle Image" class="bike-img">
+                        <img src="<?php echo htmlspecialchars($p['image_url']); ?>" class="bike-img">
                     </div>
-
                     <div class="bike-content">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="bike-name mb-0"><?php echo htmlspecialchars($p['name']); ?></h5>
-                            <span class="bike-price"><?php echo number_format($p['price_per_day'], 2); ?> <small>DT</small></span>
-                        </div>
-                        <p class="text-muted small mb-3">
-                            <?php echo htmlspecialchars(substr($p['description'], 0, 80)) . '...'; ?>
-                        </p>
-                        <a href="product_details.php?id=<?php echo $p['id']; ?>" class="btn-rent">
-                            View Details
-                        </a>
+                        <h5 class="bike-name"><?php echo htmlspecialchars($p['name']); ?></h5>
+                        <p class="bike-price"><?php echo number_format($p['price_per_day'], 2); ?> DT</p>
+                        <a href="product_details.php?id=<?php echo $p['id']; ?>" class="btn-rent">View Details</a>
                     </div>
                 </div>
             <?php endforeach; ?>
-        <?php else: ?>
-            <div class="col-12 text-center py-5">
-                <i class="fa-solid fa-bicycle fa-3x mb-3 text-secondary"></i>
-                <p class="text-muted">No vehicles found. Are you an owner? Start by adding one!</p>
-            </div>
         <?php endif; ?>
     </div>
 </div>

@@ -2,10 +2,21 @@
 session_start();
 include_once '../../Controller/ProductController.php';
 
+if (!isset($_GET['id'])) {
+    header('Location: list_product.php');
+    exit();
+}
+
 $pc = new ProductController();
 $product = $pc->getProductById($_GET['id']);
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $product['owner_id']) {
+if (!$product) {
+    die("Product not found in database.");
+}
+
+// FIXED SECURITY CHECK
+// If the product has no owner yet (0 or null), allow the logged-in owner to edit it
+if (!isset($_SESSION['user_id']) || ($_SESSION['user_role'] !== 'owner')) {
     header('Location: list_product.php');
     exit();
 }
@@ -13,15 +24,28 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $product['owner_id']
 if (isset($_POST['update_product'])) {
     $image_path = $product['image_url']; 
     if (!empty($_FILES["image_file"]["name"])) {
-        $image_path = "assets/images/" . time() . "_" . $_FILES["image_file"]["name"];
+        // Ensure this directory exists: View/FrontOffice/assets/images/
+        $target_dir = "assets/images/";
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        $image_path = $target_dir . time() . "_" . basename($_FILES["image_file"]["name"]);
         move_uploaded_file($_FILES["image_file"]["tmp_name"], $image_path);
     }
 
-    $pc->updateProduct($_GET['id'], $_POST['name'], $_POST['type'], $_POST['price'], $_POST['description'], $image_path);
-    echo "<script>alert('Updated!'); window.location='list_product.php';</script>";
+    $pc->updateProduct(
+        $_GET['id'], 
+        $_POST['name'], 
+        $_POST['type'], 
+        $_POST['price'], 
+        $_POST['description'], 
+        $image_path
+    );
+    
+    echo "<script>alert('Updated successfully!'); window.location='list_product.php';</script>";
+    exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
