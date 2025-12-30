@@ -116,15 +116,15 @@ $products = $pc->listAllProducts();
                             <?php echo htmlspecialchars(substr($p['description'], 0, 70)) . '...'; ?>
                         </p>
 
-                        <?php if($p['status'] == 'available'): ?>
-                            <a href="product_details.php?id=<?php echo $p['id']; ?>" class="btn-rent">
-                                View Details
-                            </a>
-                        <?php else: ?>
-                            <button class="btn btn-secondary w-100 disabled" style="border-radius: 10px; padding: 12px; font-weight: 600;">
-                                Currently Unavailable
-                            </button>
-                        <?php endif; ?>
+                      <?php if($p['status'] == 'available'): ?>
+        <a href="product_details.php?id=<?php echo $p['id']; ?>" class="btn-rent">
+            View Details
+        </a>
+    <?php else: ?>
+        <button class="btn btn-secondary w-100 py-2 disabled" style="border-radius: 10px; font-weight: 600; background: #bdc3c7; border: none; cursor: not-allowed;">
+            <i class="fa fa-lock me-2"></i> Currently <?php echo ucfirst($p['status']); ?>
+        </button>
+    <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>

@@ -21,11 +21,11 @@ class ProductController {
         } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
     }
 
-    public function listAllProducts() {
+ public function listAllProducts() {
         $db = Database::connect();
         try {
-            // Selecting ALL columns to ensure owner_id is available for comparison
-            $query = $db->query("SELECT * FROM products WHERE status = 'available' ORDER BY id DESC");
+            // We removed "WHERE status = 'available'" to show everything
+            $query = $db->query("SELECT * FROM products ORDER BY id DESC");
             return $query->fetchAll();
         } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
     }
