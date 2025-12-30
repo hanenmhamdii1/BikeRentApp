@@ -39,7 +39,8 @@ if (isset($_POST['update_product'])) {
         $_POST['type'], 
         $_POST['price'], 
         $_POST['description'], 
-        $image_path
+        $image_path,
+        $_POST['status']
     );
     
     echo "<script>alert('Updated successfully!'); window.location='list_product.php';</script>";
@@ -86,7 +87,12 @@ if (isset($_POST['update_product'])) {
 
                     <label>Description</label>
                     <textarea name="description" class="form-control" rows="2"><?= htmlspecialchars($product['description']) ?></textarea>
-
+                    <label>Availability Status</label>
+                    <select name="status" class="form-control" style="margin-bottom: 15px; border: 2px solid #4a6cf7;">
+                        <option value="available" <?= $product['status'] == 'available' ? 'selected' : '' ?>>✅ Available</option>
+                        <option value="rented" <?= $product['status'] == 'rented' ? 'selected' : '' ?>>🔑 Currently Rented</option>
+                        <option value="maintenance" <?= $product['status'] == 'maintenance' ? 'selected' : '' ?>>🛠 Under Maintenance</option>
+                    </select>
                     <button type="submit" name="update_product" class="main-btn">Save Changes</button>
                     <a href="list_product.php" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none;">Cancel</a>
                 </form>

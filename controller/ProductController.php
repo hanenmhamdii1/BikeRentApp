@@ -37,25 +37,30 @@ class ProductController {
         return $query->fetch();
     }
 
-    public function updateProduct($id, $name, $type, $price, $description, $image) {
-        $db = Database::connect();
-        $sql = "UPDATE products SET name = :name, type = :type, price_per_day = :price, 
-                description = :description, image_url = :image WHERE id = :id";
-        try {
-            $query = $db->prepare($sql);
-            $query->execute([
-                'id' => $id,
-                'name' => $name,
-                'type' => $type,
-                'price' => $price,
-                'description' => $description,
-                'image' => $image
-            ]);
-            return true;
-        } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
-    }
-
-    public function deleteProduct($id) {
+public function updateProduct($id, $name, $type, $price, $description, $image, $status) {
+    $db = Database::connect();
+    $sql = "UPDATE products SET 
+            name = :name, 
+            type = :type, 
+            price_per_day = :price, 
+            description = :description, 
+            image_url = :image, 
+            status = :status 
+            WHERE id = :id";
+    try {
+        $query = $db->prepare($sql);
+        $query->execute([
+            'id' => $id,
+            'name' => $name,
+            'type' => $type,
+            'price' => $price,
+            'description' => $description,
+            'image' => $image,
+            'status' => $status
+        ]);
+        return true;
+    } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
+}    public function deleteProduct($id) {
         $db = Database::connect();
         try {
             $query = $db->prepare("DELETE FROM products WHERE id = :id");

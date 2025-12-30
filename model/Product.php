@@ -7,8 +7,9 @@ class Product {
     private ?string $description;
     private ?string $image;
     private ?int $owner_id;
+    private ?string $status; // Add this
 
-    public function __construct($id, $name, $type, $price, $description, $image, $owner_id) {
+    public function __construct($id, $name, $type, $price, $description, $image, $owner_id, $status = 'available') {
         $this->id = $id;
         $this->name = $name;
         $this->type = $type;
@@ -16,6 +17,7 @@ class Product {
         $this->description = $description;
         $this->image = $image;
         $this->owner_id = $owner_id;
+        $this->status = $status;
     }
 
     // Getters
@@ -25,5 +27,6 @@ class Product {
     public function getPrice() { return $this->price; }
     public function getDescription() { return $this->description; }
     public function getImage() { return $this->image; }
+    public function getStatus() { return $this->status; } // Add this
 }
 ?>

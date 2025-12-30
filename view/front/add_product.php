@@ -84,6 +84,13 @@ if (isset($_POST['add_product'])) {
                     <label>Description</label>
                     <textarea name="description" class="form-control" rows="2" placeholder="Tell us about the condition..."></textarea>
 
+                    <label>Availability Status</label>
+                    <select name="status" class="form-control" style="margin-bottom: 15px; border: 2px solid #4a6cf7;">
+                        <option value="available" <?= $product['status'] == 'available' ? 'selected' : '' ?>>✅ Available</option>
+                        <option value="rented" <?= $product['status'] == 'rented' ? 'selected' : '' ?>>🔑 Currently Rented</option>
+                        <option value="maintenance" <?= $product['status'] == 'maintenance' ? 'selected' : '' ?>>🛠 Under Maintenance</option>
+                    </select>
+                    
                     <button type="submit" name="add_product" class="main-btn">
                         <i class="fa fa-paper-plane me-2"></i> Publish Listing
                     </button>
