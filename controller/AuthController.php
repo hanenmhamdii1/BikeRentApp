@@ -5,7 +5,7 @@ class AuthController {
     
     public function register($name, $email, $password, $role = 'client') {
         $db = Database::connect();
-        $hashPassword = password_hash($password, PASSWORD_BCRYPT); // Secure encryption
+        $hashPassword = password_hash($password, PASSWORD_BCRYPT); 
         
         $sql = "INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)";
         try {
@@ -32,12 +32,22 @@ class AuthController {
             $user = $query->fetch();
 
             if ($user && password_verify($password, $user['password'])) {
-                session_start();
+                // 1. Check Approval Status
+                if ($user['status'] !== 'approved' && $user['role'] !== 'admin') {
+                    echo "<script>alert('Your account is awaiting admin approval.'); window.location='login.php';</script>";
+                    exit();
+                }
+
+                // 2. Setup Session
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
+                
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_role'] = $user['role'];
                 $_SESSION['user_name'] = $user['name'];
-                return $user;
-                echo "User LoggedIn succesfuly";
+                
+                return $user; // Return user data to the view for redirection
             }
         } catch (Exception $e) {
             die($e->getMessage());

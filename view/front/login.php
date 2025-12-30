@@ -10,7 +10,7 @@ if (isset($_POST['login'])) {
     if ($user) {
         // Redirect based on role
         if ($user['role'] == 'admin') {
-            header('Location: ../BackOffice/bookList.php');
+            header('Location: ../back/admin_dashboard.php');
         } else {
             header('Location: list_product.php');
         }
