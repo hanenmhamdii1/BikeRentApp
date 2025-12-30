@@ -1,0 +1,190 @@
+/* View/FrontOffice/gallery.css */
+:root {
+    --primary: #4a6cf7;
+    --dark: #2e2e2e;
+    --light-bg: #f8fafd;
+}
+
+body {
+    background-color: #f4f7fe;
+    font-family: 'Inter', sans-serif;
+    color: var(--dark);
+}
+
+.gallery-wrapper {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Navbar Style */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+}
+
+.user-badge {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Product Grid */
+.bike-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.bike-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: 0.3s all ease;
+    border: 1px solid #eee;
+}
+
+.bike-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(74, 108, 247, 0.1);
+}
+
+.bike-img-container {
+    height: 200px;
+    background: var(--light-bg);
+    position: relative;
+}
+
+.bike-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bike-tag {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: var(--primary);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.bike-content {
+    padding: 20px;
+}
+
+.bike-price {
+    color: var(--primary);
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.btn-rent {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: var(--primary);
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 15px;
+    transition: 0.2s;
+}
+
+.btn-rent:hover {
+    background: #3652d1;
+    color: white;
+}
+
+/* Add Product Button Styling */
+.add-btn {
+    background: #4a6cf7;
+    color: white !important;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s all ease;
+    box-shadow: 0 4px 12px rgba(74, 108, 247, 0.2);
+}
+
+.add-btn:hover {
+    background: #3652d1;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(74, 108, 247, 0.3);
+}
+
+.logout-link {
+    color: #ff4d4d;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    margin-left: 15px;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}
+
+/* Owner action icons overlay */
+.owner-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 20;
+}
+
+.action-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+    transition: 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.action-icon.edit {
+    background: white;
+}
+
+.action-icon.delete {
+    background: #ff4d4d;
+}
+
+.action-icon:hover {
+    transform: scale(1.1);
+}
+
+/* --- FONT AWESOME SAFETY RESET --- */
+/* This forces the icons to use the FA font family regardless of body settings */
+.fa-solid, .fas, .fa {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    font-style: normal !important;
+    display: inline-block !important;
+}
+
+.action-icon.edit i { color: #4a6cf7 !important; }
+.action-icon.delete i { color: white !important; }

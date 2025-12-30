@@ -1,0 +1,81 @@
+/* General Layout */
+body { 
+    background: #f4f7fe; 
+    font-family: 'Inter', sans-serif; 
+    margin: 0;
+}
+
+.auth-container { 
+    height: 100vh; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 20px;
+}
+
+.auth-card { 
+    background: #fff; 
+    border-radius: 20px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+    overflow: hidden; 
+    display: flex; 
+    width: 100%;
+    max-width: 900px; 
+    min-height: 550px;
+}
+
+/* Sidebar Styling */
+.auth-side { 
+    background: #4a6cf7; 
+    color: #fff; 
+    padding: 40px; 
+    width: 40%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    text-align: center; 
+}
+
+.auth-side h3 { font-weight: 700; margin-bottom: 20px; }
+
+/* Form Styling */
+.auth-form { 
+    padding: 50px; 
+    width: 60%; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Full width for register if you prefer no sidebar there, 
+   but keeping it 60% for consistency */
+.auth-form-full { width: 100% !important; padding: 50px 100px; }
+
+.main-btn { 
+    background: #4a6cf7; 
+    color: white; 
+    border-radius: 8px; 
+    width: 100%; 
+    border: none; 
+    padding: 12px; 
+    font-weight: 600; 
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.main-btn:hover { background: #3652d1; }
+
+.form-control { 
+    border-radius: 8px; 
+    padding: 12px; 
+    margin-bottom: 20px; 
+    background: #f8fafd; 
+    border: 1px solid #e2e8f0; 
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+    border-color: #4a6cf7;
+}
+
+label { font-size: 14px; font-weight: 600; color: #5d657b; margin-bottom: 8px; display: block; }
