@@ -39,7 +39,7 @@ if (isset($_POST['add_product'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BikeRent | List Your Vehicle</title>
-    <link rel="stylesheet" href="assests/css/style.css"> 
+    <link rel="stylesheet" href="assets/css/style.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
 </head>
 <body>
@@ -90,7 +90,7 @@ if (isset($_POST['add_product'])) {
                         <option value="rented" <?= $product['status'] == 'rented' ? 'selected' : '' ?>>🔑 Currently Rented</option>
                         <option value="maintenance" <?= $product['status'] == 'maintenance' ? 'selected' : '' ?>>🛠 Under Maintenance</option>
                     </select>
-                    
+
                     <button type="submit" name="add_product" class="main-btn">
                         <i class="fa fa-paper-plane me-2"></i> Publish Listing
                     </button>

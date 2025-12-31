@@ -45,7 +45,7 @@ if (isset($_POST['confirm_booking'])) {
 <head>
     <meta charset="UTF-8">
     <title>BikeRent | Confirm Booking</title>
-    <link rel="stylesheet" href="assests/css/style.css"> 
+    <link rel="stylesheet" href="assets/css/style.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .summary-box { background: #f0f7ff; border: 2px dashed #4a6cf7; border-radius: 12px; padding: 15px; margin-bottom: 20px; display: none; }
