@@ -12,6 +12,7 @@ $pc = new ProductController();
 $search = $_GET['search'] ?? '';
 $status = $_GET['status'] ?? '';
 $products = $pc->listAllProducts($search, $status);
+
 ?>
 
 <!DOCTYPE html>
@@ -126,6 +127,8 @@ $products = $pc->listAllProducts($search, $status);
                                 <a href="delete_product.php?id=<?php echo $p->getId(); ?>" class="action-icon delete" title="Delete" onclick="return confirm('Are you sure?')">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
+                               
+
                             </div>
                         <?php endif; ?>
 

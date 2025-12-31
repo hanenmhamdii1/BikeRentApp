@@ -20,25 +20,21 @@ class AdminController {
         $stats['active_rents'] = $db->query("SELECT COUNT(*) FROM rentals WHERE status = 'active'")->fetchColumn();
         return $stats;
     }
-            // Inside AdminController class
-            // 1. Sort Users by Name
+            
         public function listAllUsers() {
             $db = Database::connect();
-            // Added ORDER BY name ASC
             $query = $db->query("SELECT * FROM users WHERE role != 'admin' ORDER BY name ASC");
             return $query->fetchAll();
         }
 
-        // 2. Filter Rentals by Status
         public function listAllRentals($statusFilter = '', $search = '') {
     $db = Database::connect();
     try {
-        // Base SQL with JOINs
         $sql = "SELECT r.*, u.name as client_name, p.name as bike_name 
                 FROM rentals r 
                 JOIN users u ON r.user_id = u.id 
                 JOIN products p ON r.product_id = p.id 
-                WHERE 1=1"; // 1=1 makes adding conditions easy
+                WHERE 1=1"; 
         
         $params = [];
 

@@ -16,7 +16,7 @@ class AuthController {
     
     public function register($name, $email, $password, $role = 'client') {
         $db = Database::connect();
-        $hashPassword = password_hash($password, PASSWORD_BCRYPT); 
+        $hashPassword = password_hash($password, PASSWORD_BCRYPT); // crypt password , ensure secuirty 
         
         $sql = "INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)";
         try {
@@ -40,10 +40,18 @@ class AuthController {
     try {
         $query = $db->prepare($sql);
         $query->execute(['email' => $email]);
-        $row = $query->fetch(); // This is the raw array
+        $row = $query->fetch(); 
 
         if ($row && password_verify($password, $row['password'])) {
-            // Create the User object using the Constructor
+            
+            // --- FIX START ---
+            // We use $row['status'] because that is where the DB data is stored
+            if ($row['status'] !== 'approved' && $row['role'] !== 'admin') {
+                echo "<script>alert('Your account is awaiting admin approval.'); window.location='login.php';</script>";
+                exit();
+            }
+            // --- FIX END ---
+
             $userObj = new User(
                 $row['id'], 
                 $row['name'], 
@@ -52,19 +60,15 @@ class AuthController {
                 $row['role']
             );
 
-            // Example of using a Setter if you needed to modify something 
-            // before the session starts (e.g., sanitizing a name)
-            // $userObj->setName(ucfirst($userObj->getName()));
-
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
-            
+
             $_SESSION['user_id'] = $userObj->getId();
             $_SESSION['user_role'] = $userObj->getRole();
             $_SESSION['user_name'] = $userObj->getName();
             
-            return $userObj; // Now returning an OBJECT, not an array
+            return $userObj; 
         }
     } catch (Exception $e) {
         die($e->getMessage());
@@ -72,11 +76,10 @@ class AuthController {
     return false;
 }
 
-
 public function updateProfile($id, $name, $email) {
     $db = Database::connect();
     
-    $user = new User($id, null, null, null, null);
+    $user = new User($id, null, null, null, null); // insteance 
     $user->setName($name);
     $user->setEmail($email);
 

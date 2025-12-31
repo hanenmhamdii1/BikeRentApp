@@ -42,20 +42,23 @@ public function addProduct(Product $product) {
         return null;
     }
 
-    public function listAllProducts($search = '', $statusFilter = '') {
-        $db = Database::connect();
-        $sql = "SELECT * FROM products WHERE 1=1";
-        $params = [];
+   public function listAllProducts($search = '', $status = '') {
+    $db = Database::connect();
+    
+    $params = [];
+    $sql = "SELECT * FROM products WHERE status != 'archived'";
+    
+    if (!empty($search)) {
+        $sql .= " AND (name LIKE :search OR type LIKE :search)";
+        $params['search'] = '%' . $search . '%';
+    }
 
-        if (!empty($search)) {
-            $sql .= " AND name LIKE :search";
-            $params['search'] = "%$search%";
-        }
-        if (!empty($statusFilter)) {
-            $sql .= " AND status = :status";
-            $params['status'] = $statusFilter;
-        }
+    if (!empty($status)) {
+        $sql .= " AND status = :status";
+        $params['status'] = $status;
+    }
 
+    try {
         $query = $db->prepare($sql . " ORDER BY id DESC");
         $query->execute($params);
         $rows = $query->fetchAll();
@@ -69,7 +72,10 @@ public function addProduct(Product $product) {
             );
         }
         return $productList;
+    } catch (Exception $e) {
+        die('Error: ' . $e->getMessage());
     }
+}
 public function updateProduct(Product $product) {
     $db = Database::connect();
     $sql = "UPDATE products SET 
@@ -93,6 +99,15 @@ public function updateProduct(Product $product) {
         ]);
     } catch (Exception $e) { return false; }
 }
+
+ public function deleteProduct($id) {
+        $db = Database::connect();
+        try {
+            $query = $db->prepare("DELETE FROM products WHERE id = :id");
+            $query->execute(['id' => $id]);
+            return true;
+        } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
+    }
 
 }
 ?>

@@ -22,7 +22,6 @@ if (isset($_POST['login'])) {
     }
 }
 ?>
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
