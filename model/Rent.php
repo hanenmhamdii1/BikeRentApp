@@ -8,7 +8,7 @@ class Rent {
     private float $totalPrice;
     private string $status;
 
-    public function __construct($id, $userId, $productId, $startDate, $endDate, $totalPrice, $status = 'pending') {
+    public function __construct($id, $userId, $productId, $startDate, $endDate, $totalPrice, $status = 'active') {
         $this->id = $id;
         $this->userId = $userId;
         $this->productId = $productId;
@@ -18,10 +18,17 @@ class Rent {
         $this->status = $status;
     }
 
-    // Getters
-    public function getId() { return $this->id; }
-    public function getUserId() { return $this->userId; }
-    public function getProductId() { return $this->productId; }
-    public function getTotalPrice() { return $this->totalPrice; }
+    public function getId(): ?int { return $this->id; }
+    public function getUserId(): int { return $this->userId; }
+    public function getProductId(): int { return $this->productId; }
+    public function getStartDate(): string { return $this->startDate; }
+    public function getEndDate(): string { return $this->endDate; }
+    public function getTotalPrice(): float { return $this->totalPrice; }
+    public function getStatus(): string { return $this->status; }
+
+    public function setStartDate(string $date) { $this->startDate = $date; }
+    public function setEndDate(string $date) { $this->endDate = $date; }
+    public function setStatus(string $status) { $this->status = $status; }
+    public function setTotalPrice(float $price) { $this->totalPrice = $price; }
 }
 ?>

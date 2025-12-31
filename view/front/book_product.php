@@ -31,12 +31,10 @@ if (isset($_POST['confirm_booking'])) {
     $interval = $start->diff($end);
     $days = $interval->days;
     
-    if ($days <= 0) $days = 1; // Minimum 1 day charge
+    if ($days <= 0) $days = 1; 
     
-    // FIX: Changed $product['price_per_day'] to $product->getPrice()
     $total = $days * $product->getPrice();
     
-    // FIX: Changed $product['id'] to $product->getId()
     if ($rc->createRent($_SESSION['user_id'], $product->getId(), $_POST['start_date'], $_POST['end_date'], $total)) {
         echo "<script>alert('Booking Successful! Total: " . $total . " DT'); window.location='my_rentals.php';</script>";
         exit();
@@ -97,7 +95,6 @@ if (isset($_POST['confirm_booking'])) {
         const summary = document.getElementById('priceSummary');
         const dayCount = document.getElementById('dayCount');
         const totalDisp = document.getElementById('totalDisplay');
-        // FIX: PHP Getter used to pass price to JS
         const price = <?php echo $product->getPrice(); ?>;
 
         function updatePrice() {

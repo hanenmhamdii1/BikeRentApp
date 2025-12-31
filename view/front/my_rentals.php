@@ -8,6 +8,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'client') {
 }
 
 $rc = new RentController();
+
+if (isset($_GET['cancel_id'])) {
+    $rc->cancelRental($_GET['cancel_id']);
+    echo "<script>alert('Rental Cancelled Successfully'); window.location='my_rentals.php';</script>";
+    exit();
+}
+
 $myRentals = $rc->getRentalsByClient($_SESSION['user_id']);
 ?>
 
@@ -80,7 +87,19 @@ $myRentals = $rc->getRentalsByClient($_SESSION['user_id']);
 
                             <div class="col-md-2 text-end">
                                 <?php if($r['status'] == 'active'): ?>
-                                    <span class="badge bg-success p-2 px-3" style="border-radius: 8px;">Active</span>
+                                    <div class="d-flex flex-column gap-2">
+                                        <a href="edit_booking.php?id=<?php echo $r['id']; ?>" class="btn btn-sm btn-primary" style="border-radius: 8px;">
+                                            <i class="fa fa-edit me-1"></i> Update
+                                        </a>
+                                        <a href="my_rentals.php?cancel_id=<?php echo $r['id']; ?>" 
+                                           class="btn btn-sm btn-outline-danger" 
+                                           style="border-radius: 8px;"
+                                           onclick="return confirm('Are you sure you want to cancel this rental?')">
+                                            <i class="fa fa-trash me-1"></i> Cancel
+                                        </a>
+                                    </div>
+                                <?php elseif($r['status'] == 'cancelled'): ?>
+                                    <span class="badge bg-danger p-2 px-3" style="border-radius: 8px;">Cancelled</span>
                                 <?php else: ?>
                                     <span class="badge bg-secondary p-2 px-3" style="border-radius: 8px;">Completed</span>
                                 <?php endif; ?>
