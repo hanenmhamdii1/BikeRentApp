@@ -1,6 +1,7 @@
 <?php
 session_start();
 include_once '../../Controller/ProductController.php';
+include_once '../../Model/Product.php'; 
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'owner') {
     header('Location: login.php');
@@ -16,19 +17,23 @@ if (isset($_POST['add_product'])) {
     $file_name = time() . "_" . basename($_FILES["image_file"]["name"]);
     $target_file = $target_dir . $file_name;
 
-    // Use tmp_name (fixed typo from previous suggestion)
     if (move_uploaded_file($_FILES["image_file"]["tmp_name"], $target_file)) {
-        $pc->addProduct(
+        
+        $newProduct = new Product(
+            null, 
             $_POST['name'], 
             $_POST['type'], 
-            $_POST['price'], 
+            (float)$_POST['price'], 
             $_POST['description'], 
             $target_file, 
-            $_SESSION['user_id']
+            (int)$_SESSION['user_id'],
+            $_POST['status']
         );
+
+        $pc->addProduct($newProduct);
         echo "<script>alert('Product added successfully!'); window.location='list_product.php';</script>";
     } else {
-        echo "<script>alert('Error uploading image. Make sure assets/images/ folder exists.');</script>";
+        echo "<script>alert('Error uploading image.');</script>";
     }
 }
 ?>
@@ -86,9 +91,9 @@ if (isset($_POST['add_product'])) {
 
                     <label>Availability Status</label>
                     <select name="status" class="form-control" style="margin-bottom: 15px; border: 2px solid #4a6cf7;">
-                        <option value="available" <?= $product['status'] == 'available' ? 'selected' : '' ?>>✅ Available</option>
-                        <option value="rented" <?= $product['status'] == 'rented' ? 'selected' : '' ?>>🔑 Currently Rented</option>
-                        <option value="maintenance" <?= $product['status'] == 'maintenance' ? 'selected' : '' ?>>🛠 Under Maintenance</option>
+                        <option value="available" selected>✅ Available</option>
+                        <option value="rented">🔑 Currently Rented</option>
+                        <option value="maintenance">🛠 Under Maintenance</option>
                     </select>
 
                     <button type="submit" name="add_product" class="main-btn">

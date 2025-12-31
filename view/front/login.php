@@ -1,5 +1,5 @@
 <?php
-session_start(); // Start session at the very top
+session_start(); 
 include_once '../../Controller/AuthController.php';
 
 $auth = new AuthController();
@@ -7,9 +7,11 @@ $error = "";
 
 if (isset($_POST['login'])) {
     $user = $auth->login($_POST['email'], $_POST['password']);
+    
+    // $user is now an Object of class User
     if ($user) {
-        // Redirect based on role
-        if ($user['role'] == 'admin') {
+        // Use the Getter method instead of array brackets
+        if ($user->getRole() == 'admin') {
             header('Location: ../back/admin_dashboard.php');
         } else {
             header('Location: list_product.php');
@@ -19,6 +21,7 @@ if (isset($_POST['login'])) {
         $error = "Invalid email or password!"; 
     }
 }
+?>
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -9,13 +9,16 @@ if (isset($_POST['send_otp'])) {
     $email = $_POST['email'];
     
     if ($auth->sendOTP($email)) {
+        // Move to the next screen
         header("Location: verify_otp.php?email=" . urlencode($email));
-        exit(); 
+        exit();
     } else {
-        header("Location: forgot_password.php?error=mail_failed");
+        // If it fails, go back with an error
+        header("Location: forgot_password.php?error=sending_failed");
         exit();
     }
 }
+
 if (isset($_POST['verify_code'])) {
     $email = $_POST['email'];
     $otp = $_POST['otp'];

@@ -2,6 +2,7 @@
 session_start();
 include_once '../../Controller/ProductController.php';
 include_once '../../Controller/RentController.php';
+include_once '../../Model/Product.php'; // Required for the Product Object
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'client') {
     header('Location: login.php');
@@ -16,7 +17,8 @@ if (!isset($_GET['id'])) {
 $pc = new ProductController();
 $product = $pc->getProductById($_GET['id']);
 
-if (!$product || $product['status'] !== 'available') {
+// FIX: Changed $product['status'] to $product->getStatus()
+if (!$product || $product->getStatus() !== 'available') {
     header('Location: list_product.php');
     exit();
 }
@@ -31,9 +33,11 @@ if (isset($_POST['confirm_booking'])) {
     
     if ($days <= 0) $days = 1; // Minimum 1 day charge
     
-    $total = $days * $product['price_per_day'];
+    // FIX: Changed $product['price_per_day'] to $product->getPrice()
+    $total = $days * $product->getPrice();
     
-    if ($rc->createRent($_SESSION['user_id'], $product['id'], $_POST['start_date'], $_POST['end_date'], $total)) {
+    // FIX: Changed $product['id'] to $product->getId()
+    if ($rc->createRent($_SESSION['user_id'], $product->getId(), $_POST['start_date'], $_POST['end_date'], $total)) {
         echo "<script>alert('Booking Successful! Total: " . $total . " DT'); window.location='my_rentals.php';</script>";
         exit();
     }
@@ -57,8 +61,8 @@ if (isset($_POST['confirm_booking'])) {
             <div class="auth-side">
                 <i class="fa-solid fa-receipt fa-3x mb-3"></i>
                 <h3>Booking Summary</h3>
-                <p>Vehicle: <strong><?php echo htmlspecialchars($product['name']); ?></strong></p>
-                <p>Rate: <strong><?php echo $product['price_per_day']; ?> DT / Day</strong></p>
+                <p>Vehicle: <strong><?php echo htmlspecialchars($product->getName()); ?></strong></p>
+                <p>Rate: <strong><?php echo $product->getPrice(); ?> DT / Day</strong></p>
             </div>
             
             <div class="auth-form">
@@ -81,7 +85,7 @@ if (isset($_POST['confirm_booking'])) {
                     <button type="submit" name="confirm_booking" class="main-btn">
                         <i class="fa fa-check-circle me-2"></i> Confirm Rental
                     </button>
-                    <a href="product_details.php?id=<?php echo $product['id']; ?>" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none;">Cancel</a>
+                    <a href="product_details.php?id=<?php echo $product->getId(); ?>" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none;">Cancel</a>
                 </form>
             </div>
         </div>
@@ -93,7 +97,8 @@ if (isset($_POST['confirm_booking'])) {
         const summary = document.getElementById('priceSummary');
         const dayCount = document.getElementById('dayCount');
         const totalDisp = document.getElementById('totalDisplay');
-        const price = <?php echo $product['price_per_day']; ?>;
+        // FIX: PHP Getter used to pass price to JS
+        const price = <?php echo $product->getPrice(); ?>;
 
         function updatePrice() {
             if(start.value && end.value) {

@@ -1,50 +1,76 @@
 <?php
 include_once(__DIR__ . '/../config.php');
+include_once(__DIR__ . '/../model/Product.php'); // Ensure this path is correct
 
 class ProductController {
     
-    public function addProduct($name, $type, $price, $description, $image, $owner_id) {
+public function addProduct(Product $product) {
+    $db = Database::connect();
+    $sql = "INSERT INTO products (name, type, price_per_day, description, image_url, owner_id, status) 
+            VALUES (:name, :type, :price, :description, :image, :owner_id, :status)";
+    try {
+        $query = $db->prepare($sql);
+        $query->execute([
+            'name'        => $product->getName(),
+            'type'        => $product->getType(),
+            'price'       => $product->getPrice(),
+            'description' => $product->getDescription(),
+            'image'       => $product->getImage(),
+            'owner_id'    => $product->getOwnerId(),
+            'status'      => $product->getStatus()
+        ]);
+        return true;
+    } catch (Exception $e) { 
+        die('Error: ' . $e->getMessage()); 
+    }
+}
+
+    
+    public function getProductById($id) {
         $db = Database::connect();
-        $sql = "INSERT INTO products (name, type, price_per_day, description, image_url, owner_id) 
-                VALUES (:name, :type, :price, :description, :image, :owner_id)";
-        try {
-            $query = $db->prepare($sql);
-            $query->execute([
-                'name' => $name,
-                'type' => $type,
-                'price' => $price,
-                'description' => $description,
-                'image' => $image,
-                'owner_id' => $owner_id
-            ]);
-            return true;
-        } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
+        $query = $db->prepare("SELECT * FROM products WHERE id = ?");
+        $query->execute([$id]);
+        $p = $query->fetch();
+
+        if ($p) {
+            return new Product(
+                $p['id'], $p['name'], $p['type'], 
+                $p['price_per_day'], $p['description'], 
+                $p['image_url'], $p['owner_id'], $p['status']
+            );
+        }
+        return null;
     }
 
- public function listAllProducts($search = '', $statusFilter = '') {
-    $db = Database::connect();
-    try {
-        $sql = "SELECT * FROM products WHERE 1=1"; // 1=1 makes adding conditions easier
+    public function listAllProducts($search = '', $statusFilter = '') {
+        $db = Database::connect();
+        $sql = "SELECT * FROM products WHERE 1=1";
         $params = [];
 
         if (!empty($search)) {
             $sql .= " AND name LIKE :search";
             $params['search'] = "%$search%";
         }
-
         if (!empty($statusFilter)) {
             $sql .= " AND status = :status";
             $params['status'] = $statusFilter;
         }
 
-        $sql .= " ORDER BY id DESC";
-        $query = $db->prepare($sql);
+        $query = $db->prepare($sql . " ORDER BY id DESC");
         $query->execute($params);
-        return $query->fetchAll();
-    } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
-}
+        $rows = $query->fetchAll();
 
-public function updateProduct($id, $name, $type, $price, $description, $image, $status) {
+        $productList = [];
+        foreach ($rows as $p) {
+            $productList[] = new Product(
+                $p['id'], $p['name'], $p['type'], 
+                $p['price_per_day'], $p['description'], 
+                $p['image_url'], $p['owner_id'], $p['status']
+            );
+        }
+        return $productList;
+    }
+public function updateProduct(Product $product) {
     $db = Database::connect();
     $sql = "UPDATE products SET 
             name = :name, 
@@ -56,24 +82,17 @@ public function updateProduct($id, $name, $type, $price, $description, $image, $
             WHERE id = :id";
     try {
         $query = $db->prepare($sql);
-        $query->execute([
-            'id' => $id,
-            'name' => $name,
-            'type' => $type,
-            'price' => $price,
-            'description' => $description,
-            'image' => $image,
-            'status' => $status
+        return $query->execute([
+            'id' => $product->getId(),
+            'name' => $product->getName(),
+            'type' => $product->getType(),
+            'price' => $product->getPrice(),
+            'description' => $product->getDescription(),
+            'image' => $product->getImage(),
+            'status' => $product->getStatus()
         ]);
-        return true;
-    } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
-}    public function deleteProduct($id) {
-        $db = Database::connect();
-        try {
-            $query = $db->prepare("DELETE FROM products WHERE id = :id");
-            $query->execute(['id' => $id]);
-            return true;
-        } catch (Exception $e) { die('Error: ' . $e->getMessage()); }
-    }
+    } catch (Exception $e) { return false; }
+}
+
 }
 ?>

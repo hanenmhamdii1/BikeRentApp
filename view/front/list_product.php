@@ -1,16 +1,14 @@
 <?php
 session_start();
 include_once '../../Controller/ProductController.php';
+include_once '../../Model/Product.php'; 
 
-// Redirect to login if user is not authenticated
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 
 $pc = new ProductController();
-
-// We capture these for the initial page load so the search stays if you refresh
 $search = $_GET['search'] ?? '';
 $status = $_GET['status'] ?? '';
 $products = $pc->listAllProducts($search, $status);
@@ -54,10 +52,14 @@ $products = $pc->listAllProducts($search, $status);
         <div class="logo">
             <h3 style="color: #4a6cf7; font-weight: 800; margin: 0;">BikeRent</h3>
         </div>
-        <div class="user-badge">
+       <div class="user-badge">
+            <a href="profile.php" class="me-3 text-decoration-none" style="color: var(--dark); font-weight: 600;">
+                <i class="fa-solid fa-user-circle me-1" style="color: #4a6cf7;"></i> My Profile
+            </a>
+
             <span>Hello, <strong><?php echo htmlspecialchars($_SESSION['user_name']); ?></strong></span>
             
-            <?php if($_SESSION['user_role'] == 'owner'): ?>
+             <?php if($_SESSION['user_role'] == 'owner'): ?>
                 <a href="add_product.php" class="add-btn">
                     <i class="fa-solid fa-plus"></i> Add Vehicle
                 </a>
@@ -70,6 +72,7 @@ $products = $pc->listAllProducts($search, $status);
             <a href="logout.php" class="logout-link">
                 <i class="fa-solid fa-sign-out-alt"></i> Logout
             </a>
+
         </div>
     </nav>
 
@@ -104,46 +107,46 @@ $products = $pc->listAllProducts($search, $status);
             <?php foreach ($products as $p): ?>
                 <div class="bike-card">
                     <div class="bike-img-container">
-                        <span class="bike-tag"><?php echo htmlspecialchars($p['type']); ?></span>
+                        <span class="bike-tag"><?php echo htmlspecialchars($p->getType()); ?></span>
                         
                         <?php 
                             $statusClass = 'status-available';
-                            if ($p['status'] == 'rented') $statusClass = 'status-rented';
-                            if ($p['status'] == 'maintenance') $statusClass = 'status-maintenance';
+                            if ($p->getStatus() == 'rented') $statusClass = 'status-rented';
+                            if ($p->getStatus() == 'maintenance') $statusClass = 'status-maintenance';
                         ?>
                         <span class="status-badge <?php echo $statusClass; ?>">
-                            <?php echo htmlspecialchars($p['status'] ?? 'available'); ?>
+                            <?php echo htmlspecialchars($p->getStatus()); ?>
                         </span>
                         
                         <?php if($_SESSION['user_role'] == 'owner'): ?>
                             <div class="owner-actions">
-                                <a href="edit_product.php?id=<?php echo $p['id']; ?>" class="action-icon edit" title="Edit">
+                                <a href="edit_product.php?id=<?php echo $p->getId(); ?>" class="action-icon edit" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <a href="delete_product.php?id=<?php echo $p['id']; ?>" class="action-icon delete" title="Delete" onclick="return confirm('Are you sure?')">
+                                <a href="delete_product.php?id=<?php echo $p->getId(); ?>" class="action-icon delete" title="Delete" onclick="return confirm('Are you sure?')">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </div>
                         <?php endif; ?>
 
-                        <img src="<?php echo htmlspecialchars($p['image_url']); ?>" class="bike-img" alt="Vehicle">
+                        <img src="<?php echo htmlspecialchars($p->getImage()); ?>" class="bike-img" alt="Vehicle">
                     </div>
 
                     <div class="bike-content">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="bike-name mb-0"><?php echo htmlspecialchars($p['name']); ?></h5>
-                            <p class="bike-price mb-0"><?php echo number_format($p['price_per_day'], 2); ?> <small>DT</small></p>
+                            <h5 class="bike-name mb-0"><?php echo htmlspecialchars($p->getName()); ?></h5>
+                            <p class="bike-price mb-0"><?php echo number_format($p->getPrice(), 2); ?> <small>DT</small></p>
                         </div>
                         
                         <p class="text-muted small mb-3">
-                            <?php echo htmlspecialchars(substr($p['description'], 0, 70)) . '...'; ?>
+                            <?php echo htmlspecialchars(substr($p->getDescription(), 0, 70)) . '...'; ?>
                         </p>
 
-                        <?php if($p['status'] == 'available'): ?>
-                            <a href="product_details.php?id=<?php echo $p['id']; ?>" class="btn-rent">View Details</a>
+                        <?php if($p->getStatus() == 'available'): ?>
+                            <a href="product_details.php?id=<?php echo $p->getId(); ?>" class="btn-rent">View Details</a>
                         <?php else: ?>
                             <button class="btn btn-secondary w-100 py-2 disabled" style="border-radius: 10px; font-weight: 600; background: #bdc3c7; border: none; cursor: not-allowed;">
-                                <i class="fa fa-lock me-2"></i> Currently <?php echo ucfirst($p['status']); ?>
+                                <i class="fa fa-lock me-2"></i> Currently <?php echo ucfirst($p->getStatus()); ?>
                             </button>
                         <?php endif; ?>
                     </div>
@@ -167,13 +170,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateGallery() {
         const s = searchInput.value;
         const st = statusSelect.value;
-
-        // Note: Make sure search_products.php exists in the same folder!
         fetch(`search_products.php?search=${encodeURIComponent(s)}&status=${st}`)
             .then(response => response.text())
-            .then(data => {
-                grid.innerHTML = data;
-            })
+            .then(data => { grid.innerHTML = data; })
             .catch(err => console.error('Error updating gallery:', err));
     }
 
@@ -182,4 +181,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 </body>
-</html>
+</html> 
